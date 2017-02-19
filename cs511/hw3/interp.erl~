@@ -1,0 +1,93 @@
+-module(interp).
+-export([scanAndParse/1,runFile/1,runStr/1]).
+-include("types.hrl").
+
+loop(InFile,Acc) ->
+    case io:request(InFile,{get_until,prompt,lexer,token,[1]}) of
+        {ok,Token,_EndLine} ->
+            loop(InFile,Acc ++ [Token]);
+        {error,token} ->
+            exit(scanning_error);
+        {eof,_} ->
+            Acc
+    end.
+
+scanAndParse(FileName) ->
+    {ok, InFile} = file:open(FileName, [read]),
+    Acc = loop(InFile,[]),
+    file:close(InFile),
+    {Result, AST} = parser:parse(Acc),
+    case Result of 
+	ok -> AST;
+	_ -> io:format("Parse error~n")
+    end.
+
+
+-spec runFile(string()) -> valType().
+runFile(FileName) ->
+    valueOf(scanAndParse(FileName),env:new()).
+
+scanAndParseString(String) ->
+    {_ResultL, TKs, _L} = lexer:string(String),
+    parser:parse(TKs).
+
+-spec runStr(string()) -> valType().
+runStr(String) ->
+    {Result, AST} = scanAndParseString(String),
+    case Result  of 
+    	ok -> valueOf(AST,env:new());
+    	_ -> io:format("Parse error~n")
+    end.
+
+
+-spec numVal2Num(numValType()) -> integer().
+numVal2Num({num, Num}) ->
+    Num.
+
+-spec boolVal2Bool(boolValType()) -> boolean().
+boolVal2Bool({bool, Bool}) ->
+    Bool.
+
+-spec valueOf(expType(),envType()) -> valType().
+valueOf({numExp,{Type,Line,Value}},Env) ->
+   {Type, Value};
+
+valueOf({idExp,{Type,Line,Variable}},Env) ->
+   case env:lookup(Env,Variable) of
+        {ok,A} ->
+            A;
+        _Else ->
+            Variable
+   end;
+
+valueOf({diffExp,V1,V2},Env) ->
+   {num, (numVal2Num(valueOf(V1,Env)) - numVal2Num(valueOf(V2,Env)))};
+
+valueOf({plusExp,V1,V2},Env) ->
+   {num, (numVal2Num(valueOf(V1,Env)) + numVal2Num(valueOf(V2,Env)))};
+
+valueOf({isZeroExp,V1},Env) ->
+   {bool, ((numVal2Num(valueOf(V1,Env))) =:= 0) };
+
+valueOf({procExp,Var,Body},Env) ->
+   {proc, valueOf({idExp,Var},Env), Body, Env};
+
+valueOf({appExp,Name,Param},Env) ->
+   case valueOf(Name,Env) of
+        {proc,Param,Body,Local} ->
+            valueOf({letExp,{id,1,Param},Param,Body},Local);
+        _Else ->
+            valueOf(Param,Env)
+    end;
+
+valueOf({ifThenElseExp,If,Then,Else},Env) ->
+    case boolVal2Bool(valueOf(If,Env)) of
+        true ->
+            valueOf(Then,Env);
+        _Else ->
+            valueOf(Else,Env)
+    end;
+
+valueOf({letExp,{id,_,VarName},Value,Exp}, Env) ->
+    valueOf(Exp, env:add(Env, VarName, valueOf(Value,Env))).
+

@@ -1,0 +1,8 @@
+Michael John
+Fall 2016
+cs511 Concurrent Programming
+Professor Bonelli
+This is a project to show off the power of Erlang.
+There are a number of watchers that can observe 10 sensors. The sensors are simple - they live and die generating random numbers up to 11.
+The watcher is responsible for reading from the sensor and restarting a sensor if it dies. It manages the id of the sensors it watches and maintains the place of the sensor in the array of sensors.
+This manipulates Erlang messaging passing and pattern matching.
