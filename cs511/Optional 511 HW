@@ -1,0 +1,30 @@
+Optional 511 HW
+
+
+Exercise Book 5, Num. 5
+
+We wish to model and industrial oil reﬁnement plant where autonomous vehicles transport products with diﬀerent levels of processing. The plant consists of a platform where it receives raw material, another one where it deposits the ﬁnished product, 8 processing machines and 4 vehicles.
+Each machine can unload the contents of a vehicle, process the contents and then load the reﬁned product into a vehicle. The processed product is not necessarily loaded into the same vehicle from which it unloaded the unprocessed product.
+Each vehicle has an ordered list of loading and unloading tasks to be performed in diﬀerent machines or platforms. The action of loading, unloading, processing and movement of the vehicles takes a non-negligible amount of time. Thus it is important to guarantee that the vehicles stay next to the machines while they load and unload. Also, loading and vehicle displacement should be able to take place at the same time.
+Model this scenario using semaphores. Assume that:
+It is always possible to load the reception platform and unload to the ﬁnished product platform. No route requires unloading in the reception platform or loading from the ﬁnished product
+platform.
+A vehicle waiting to be loaded does not obstruct one which is being unloaded by the same machine.
+
+
+Exercise Book 5, Num. 6
+
+Blood donations are received in a hemotherapy center. Extraction takes place in one of 4 beds and takes a random amount of time. People that arrive to donate are received in the order in which they arrive, but if there are no free beds they wait in the waiting room. In the waiting room there are 10 outdated magazines that people read while they wait for their turn and a TV set in the background. Donors prefer to read magazines, but if none are available they watch TV. When a bed is freed, the next donor is called from the waiting room, who leaves the magazine she was reading. As soon as a magazine has been freed, the donors watching TV compete to take it.
+a) Identify the active roles and shared resources in this scenario. b) Give a solution using semaphores that models this scenario.
+
+
+Exercise Book 6, Num 8
+
+The organizing committee of a conference has a conference room for talks. People interested in attending a talk enter the room and wait until the talk starts. Talks start when the speaker has arrived in the room. Participants are respectful and do not leave the room until the talk has ﬁnished. Neither do they enter when the speaker has already begun. The room has capacity for 50 participants, excluding the speaker.
+Provide a solution using monitors that takes the following scenarios into account:
+a) There is only one room and the same talk is given over and over again. The speaker rests 5 minutes between talks. If, at the moment in which the talk starts, the room is empty (disregarding for the speaker), the speaker rests ﬁve minutes waiting for the assistants to arrive. When the room
+is full, new assistants must wait until the next talk starts, after the speakers rest.
+b) The same as above except that three talks take place in the room, one after the other. The speakers must wait until there are at least 40 people in the room.
+
+
+
